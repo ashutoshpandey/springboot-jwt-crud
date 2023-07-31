@@ -1,11 +1,13 @@
 package com.ashutosh.springsecurity.filters;
 
+import com.ashutosh.springsecurity.services.JwtService;
 import com.ashutosh.springsecurity.util.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,17 +22,18 @@ import java.io.IOException;
 @AllArgsConstructor
 public class JwtTokenFilter extends OncePerRequestFilter {
 
-    private JwtUtil jwtUtil;
+    @Autowired
+    private JwtService jwtService;
     private UserDetailsService userDetailsService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        String token = jwtUtil.resolveToken(request);
+        String token = jwtService.resolveToken(request);
 
-        if (null != token && jwtUtil.validateToken(token)) {
-            UserDetails userDetails = userDetailsService.loadUserByUsername(jwtUtil.getUsername(token));
+        if (null != token && jwtService.isTokenValid(token)) {
+            UserDetails userDetails = userDetailsService.loadUserByUsername(jwtService.extractUserName(token));
 
             UsernamePasswordAuthenticationToken authentication
                     = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());

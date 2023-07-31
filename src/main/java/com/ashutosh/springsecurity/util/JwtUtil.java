@@ -21,7 +21,7 @@ public class JwtUtil {
     public JwtUtil(){
     }
 
-    public String createToken(Authentication authentication) {
+    public String generateToken(Authentication authentication) {
 
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 

@@ -1,18 +1,18 @@
 package com.ashutosh.springsecurity.services;
 
-import com.ashutosh.springsecurity.models.ApiResponse;
 import com.ashutosh.springsecurity.models.User;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserService {
-    ApiResponse saveUser(User user);
+    User saveUser(User user);
 
-    ApiResponse getUserById(Long userId);
+    Optional<User> getUserById(Long userId);
 
-    ApiResponse getAllUsers();
+    List<User> getAllUsers();
 
-    ApiResponse updateUser(User user);
+    User updateUser(User user);
 
-    ApiResponse deleteUser(Long userId);
+    Long deleteUser(Long userId);
 }

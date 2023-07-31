@@ -1,7 +1,6 @@
 package com.ashutosh.springsecurity.services.impl;
 
 import com.ashutosh.springsecurity.exceptions.RecordNotFoundException;
-import com.ashutosh.springsecurity.models.ApiResponse;
 import com.ashutosh.springsecurity.models.User;
 import com.ashutosh.springsecurity.repository.UserRepository;
 import com.ashutosh.springsecurity.services.UserService;
@@ -10,7 +9,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,36 +23,29 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     private UserRepository userRepo;
 
     @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
     @Override
-    public ApiResponse saveUser(User user) {
+    public User saveUser(User user) {
         String password = user.getPassword();
         String encodedPassword = passwordEncoder.encode(password);
         user.setPassword(encodedPassword);
 
-        user = userRepo.save(user);
-        return new ApiResponse(true, user);
+        return userRepo.save(user);
     }
 
     @Override
-    public ApiResponse getUserById(Long userId) {
-        Optional<User> optionalUser = userRepo.findById(userId);
-
-        if (optionalUser.isEmpty()) {
-            throw new RecordNotFoundException("User not found with ID: " + userId);
-        } else {
-            return new ApiResponse(true, optionalUser.get());
-        }
+    public Optional<User> getUserById(Long userId) {
+        return userRepo.findById(userId);
     }
 
     @Override
-    public ApiResponse getAllUsers() {
-        return new ApiResponse(true, userRepo.findAll());
+    public List<User> getAllUsers() {
+        return userRepo.findAll();
     }
 
     @Override
-    public ApiResponse updateUser(User user) {
+    public User updateUser(User user) {
         Optional<User> existing = userRepo.findById(user.getId());
 
         if(existing.isEmpty()){
@@ -70,20 +62,19 @@ public class UserServiceImpl implements UserDetailsService, UserService {
                 existingUser.setPassword(encodedPassword);
             }
 
-            existingUser = userRepo.save(existingUser);
-            return new ApiResponse(true, existingUser);
+            return userRepo.save(existingUser);
         }
     }
 
     @Override
-    public ApiResponse deleteUser(Long userId) {
+    public Long deleteUser(Long userId) {
         Optional<User> existing = userRepo.findById(userId);
 
         if(existing.isEmpty()){
             throw new RecordNotFoundException("User not found with ID: " + userId);
         }else {
             userRepo.deleteById(userId);
-            return new ApiResponse(true, userId);
+            return userId;
         }
     }
 
