@@ -42,12 +42,9 @@ public class WebSecurityConfig {
         httpSecurity
                 .csrf(csrf->csrf.disable())
                 .authorizeHttpRequests(auth ->
-                        auth.requestMatchers("/home","/register","/saveUser").permitAll()
+                        auth.requestMatchers("/hello","/login").permitAll()
                                 .requestMatchers("/admin").hasAuthority("Admin")
-                                .requestMatchers("/mgr").hasAuthority("Manager")
-                                .requestMatchers("/emp").hasAuthority("Employee")
-                                .requestMatchers("/hr").hasAuthority("HR")
-                                .requestMatchers("/common").hasAnyAuthority("Employeee,Manager,Admin")
+                                .requestMatchers("/user").hasAuthority("User")
                                 .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider());
