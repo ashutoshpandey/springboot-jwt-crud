@@ -7,7 +7,9 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name="users")
+@Table(name="users", uniqueConstraints = {
+        @UniqueConstraint(columnNames = "email")
+})
 public class User {
 
     @Id
@@ -30,5 +32,5 @@ public class User {
             joinColumns = @JoinColumn(name="user_id")
     )
     @Column(name="roles")
-    private List<String> roles;
+    private List<Role> roles;
 }

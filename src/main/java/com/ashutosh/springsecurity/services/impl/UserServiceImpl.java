@@ -93,7 +93,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
                     user.getPassword(),
                     user.getRoles()
                             .stream()
-                            .map(role-> new SimpleGrantedAuthority(role))
+                            .map(role-> new SimpleGrantedAuthority(role.getRole().name()))
                             .collect(Collectors.toSet())
             );
         }
