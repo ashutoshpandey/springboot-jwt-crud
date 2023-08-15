@@ -1,15 +1,21 @@
 package com.ashutosh.springsecurity.config;
 
+import com.ashutosh.springsecurity.exceptions.UnauthorizedHandler;
 import com.ashutosh.springsecurity.filters.JwtTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableMethodSecurity
@@ -19,6 +25,9 @@ public class WebSecurityConfig {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private UnauthorizedHandler unauthorizedHandler;
 
     private final JwtTokenFilter jwtAuthenticationFilter;
 
@@ -37,18 +46,35 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+    public AuthenticationManager authenticationManager(
+            final AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
 
-        httpSecurity
-                .csrf(csrf->csrf.disable())
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+        /*
+        httpSecurity.csrf(csrf -> csrf.disable())
+                .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authenticationProvider(authenticationProvider())
                 .authorizeHttpRequests(auth ->
-                        auth.requestMatchers("/api/test/**").permitAll()
-                                .requestMatchers("/api/login/**").permitAll()
-                                .requestMatchers("/admin").hasAuthority("Admin")
-                                .requestMatchers("/user").hasAuthority("User")
+                        auth.requestMatchers("/api/auth/**").permitAll()
+                                .requestMatchers("/api/test/**").permitAll()
+                                .requestMatchers("/api/admin").hasAuthority("Admin")
+                                .requestMatchers("/api/user").hasAuthority("User")
                                 .anyRequest().authenticated()
-                )
-                .authenticationProvider(authenticationProvider());
+                ).addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return httpSecurity.build();
+         */
+
+        httpSecurity.authorizeHttpRequests(
+            auth ->
+                    auth.requestMatchers("/api/auth/**").permitAll()
+                    .anyRequest().permitAll()
+        )
+        .csrf(AbstractHttpConfigurer::disable);
 
         return httpSecurity.build();
     }

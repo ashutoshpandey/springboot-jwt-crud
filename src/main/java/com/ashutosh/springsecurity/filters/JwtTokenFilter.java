@@ -1,7 +1,6 @@
 package com.ashutosh.springsecurity.filters;
 
 import com.ashutosh.springsecurity.services.JwtService;
-import com.ashutosh.springsecurity.util.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

@@ -2,6 +2,7 @@ package com.ashutosh.springsecurity.services.impl;
 
 import com.ashutosh.springsecurity.exceptions.RecordNotFoundException;
 import com.ashutosh.springsecurity.models.User;
+import com.ashutosh.springsecurity.models.request.FilterUserRequest;
 import com.ashutosh.springsecurity.repository.UserRepository;
 import com.ashutosh.springsecurity.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -40,8 +42,20 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
-    public List<User> getAllUsers() {
-        return userRepo.findAll();
+    public List<User> filterUsers(FilterUserRequest request) {
+        List<User> users;
+
+        if (request.getName() != null && request.getEmail() != null) {
+            users = userRepo.getUsersByNameAndEmail(request.getName(), request.getEmail());
+        } else if (request.getEmail() != null) {
+            users = userRepo.getUsersByEmail(request.getEmail());
+        } else if (request.getName() != null) {
+            users = userRepo.getUsersByName(request.getName());
+        } else {
+            users = new ArrayList<>();
+        }
+
+        return users;
     }
 
     @Override
