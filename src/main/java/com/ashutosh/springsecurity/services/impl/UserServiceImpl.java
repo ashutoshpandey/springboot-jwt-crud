@@ -13,9 +13,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,6 +30,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         String password = user.getPassword();
         String encodedPassword = passwordEncoder.encode(password);
         user.setPassword(encodedPassword);
+        user.setRoles("USER");
 
         return userRepo.save(user);
     }
@@ -105,9 +104,9 @@ public class UserServiceImpl implements UserDetailsService, UserService {
             return new org.springframework.security.core.userdetails.User(
                     user.getEmail(),
                     user.getPassword(),
-                    user.getRoles()
+                    Arrays.stream(user.getRoles().split(",")).toList()
                             .stream()
-                            .map(role-> new SimpleGrantedAuthority(role.getRole().name()))
+                            .map(role-> new SimpleGrantedAuthority(role))
                             .collect(Collectors.toSet())
             );
         }

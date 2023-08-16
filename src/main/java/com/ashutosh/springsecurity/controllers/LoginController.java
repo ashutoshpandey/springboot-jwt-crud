@@ -16,7 +16,7 @@ public class LoginController {
     private LoginService loginService;
 
     @PostMapping("/login")
-    public ApiResponse saveUser(@RequestBody LoginRequest loginModel) throws Exception{
+    public ApiResponse doLogin(@RequestBody LoginRequest loginModel) throws Exception{
         return new ApiResponse(true, loginService.doLogin(loginModel));
     }
 }

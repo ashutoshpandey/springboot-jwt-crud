@@ -1,10 +1,8 @@
 package com.ashutosh.springsecurity.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
-
-import java.util.List;
+import lombok.ToString;
 
 @Data
 @Entity
@@ -20,18 +18,13 @@ public class User {
     @Column(name="name")
     private String name;
 
-    @JsonIgnore
     @Column(name="password")
+    @ToString.Exclude
     private String password;
 
     @Column(name="email")
     private String email;
 
-    @ElementCollection(fetch= FetchType.EAGER)
-    @CollectionTable(
-            name="roles",
-            joinColumns = @JoinColumn(name="user_id")
-    )
     @Column(name="roles")
-    private List<Role> roles;
+    private String roles;
 }

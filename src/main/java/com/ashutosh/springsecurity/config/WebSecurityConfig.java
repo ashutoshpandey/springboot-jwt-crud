@@ -69,12 +69,14 @@ public class WebSecurityConfig {
         return httpSecurity.build();
          */
 
-        httpSecurity.authorizeHttpRequests(
-            auth ->
-                    auth.requestMatchers("/api/auth/**").permitAll()
-                    .anyRequest().permitAll()
-        )
-        .csrf(AbstractHttpConfigurer::disable);
+        httpSecurity
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(
+                    auth ->
+                    auth.requestMatchers("/api/users/**").hasAuthority("USER")
+                    .requestMatchers("/api/auth/**").permitAll()
+                            .anyRequest().permitAll()
+                );
 
         return httpSecurity.build();
     }

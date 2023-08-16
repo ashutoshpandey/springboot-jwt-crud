@@ -24,8 +24,6 @@ public class JwtServiceImpl implements JwtService {
     @Value("${token.signing.key}")
     private String jwtSigningKey;
 
-    Key key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
-
     @Override
     public String extractUserName(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -50,7 +48,7 @@ public class JwtServiceImpl implements JwtService {
 
         try {
             Jwts.parserBuilder()
-                    .setSigningKey(key)
+                    .setSigningKey(getSigningKey())
                     .build()
                     .parseClaimsJws(token);
             return true;
@@ -63,7 +61,7 @@ public class JwtServiceImpl implements JwtService {
         } catch (IllegalArgumentException ex) {
             log.error("JWT claims string is empty");
         } catch (SignatureException e) {
-            log.error("there is an error with the signature of you token ");
+            log.error("There is an error with the signature of you token ");
         }
         return false;
     }
@@ -74,7 +72,9 @@ public class JwtServiceImpl implements JwtService {
     }
 
     private String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
-        return Jwts.builder().setClaims(extraClaims).setSubject(userDetails.getUsername())
+        return Jwts.builder()
+                .setClaims(extraClaims)
+                .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
@@ -90,7 +90,10 @@ public class JwtServiceImpl implements JwtService {
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token)
+        return Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
                 .getBody();
     }
 

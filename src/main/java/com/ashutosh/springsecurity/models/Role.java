@@ -1,6 +1,5 @@
 package com.ashutosh.springsecurity.models;
 
-import com.ashutosh.springsecurity.enums.ERole;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -12,14 +11,10 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Enumerated(EnumType.STRING)
     @Column(length = 20)
-    private ERole role;
+    private String name;
 
-    public Role() {
-    }
-
-    public Role(ERole role) {
-        this.role = role;
+    public Role(String name){
+        this.name = name;
     }
 }
