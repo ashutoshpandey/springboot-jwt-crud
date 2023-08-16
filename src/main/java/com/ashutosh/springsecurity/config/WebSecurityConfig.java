@@ -71,12 +71,14 @@ public class WebSecurityConfig {
 
         httpSecurity
                 .csrf(csrf -> csrf.disable())
+                .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
                 .authorizeHttpRequests(
                     auth ->
-                    auth.requestMatchers("/api/users/**").hasAuthority("USER")
+                    auth.requestMatchers("/api/users/**").hasAuthority("ROLE_USER")
                     .requestMatchers("/api/auth/**").permitAll()
                             .anyRequest().permitAll()
-                );
+                )
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return httpSecurity.build();
     }

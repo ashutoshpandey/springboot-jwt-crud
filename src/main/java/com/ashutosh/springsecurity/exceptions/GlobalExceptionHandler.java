@@ -44,7 +44,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(UnauthorizedException.class)
-    public ResponseEntity<ApiResponse> handleUnauthorizedException(Exception exception) {
+    public ResponseEntity<ApiResponse> handleUnauthorizedException(UnauthorizedException exception) {
         logger.error("Unauthorized exception:", exception.getMessage());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(new ApiResponse(false, exception.getMessage()));
