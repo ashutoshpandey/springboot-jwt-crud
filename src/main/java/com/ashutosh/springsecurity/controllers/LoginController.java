@@ -3,6 +3,7 @@ package com.ashutosh.springsecurity.controllers;
 import com.ashutosh.springsecurity.models.response.ApiResponse;
 import com.ashutosh.springsecurity.models.request.LoginRequest;
 import com.ashutosh.springsecurity.services.LoginService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,7 +17,7 @@ public class LoginController {
     private LoginService loginService;
 
     @PostMapping("/login")
-    public ApiResponse doLogin(@RequestBody LoginRequest loginModel) throws Exception{
+    public ApiResponse doLogin(@RequestBody @Valid LoginRequest loginModel) throws Exception{
         return new ApiResponse(true, loginService.doLogin(loginModel));
     }
 }

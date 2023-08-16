@@ -8,8 +8,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.ErrorResponse;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -50,6 +55,18 @@ public class GlobalExceptionHandler {
                 .body(new ApiResponse(false, exception.getMessage()));
     }
 
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiResponse> handleValidationException(MethodArgumentNotValidException ex) {
+        // Construct a custom error response based on the validation errors
+        List<String> errors = ex.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(error -> error.getDefaultMessage())
+                .collect(Collectors.toList());
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new ApiResponse(false, errors));
+    }
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse> handleGenericException(Exception exception) {
         logger.error("Exception:", exception.getMessage());
