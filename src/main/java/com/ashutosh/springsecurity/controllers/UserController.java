@@ -17,14 +17,15 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    // build create User REST API
+    // Create new user
+    // /api/users
     @PostMapping
     public ApiResponse saveUser(@RequestBody User user){
         User savedUser = userService.saveUser(user);
         return new ApiResponse(true, savedUser);
     }
 
-    // get user by id
+    // Get user by id
     // /api/users/1
     @GetMapping("{id}")
     public ApiResponse getUserById(@PathVariable("id") Long userId){
@@ -36,8 +37,8 @@ public class UserController {
         }
     }
 
-    // Get All Users REST API
-    // /api/users
+    // Filter users by field
+    // /api/users/filter
     @PostMapping("/filter")
     public ApiResponse filterUsers(@RequestBody FilterUserRequest request){
         List<User> users = userService.filterUsers(request);
@@ -56,6 +57,7 @@ public class UserController {
     }
 
     // Delete User by id
+    // /api/users/1
     @DeleteMapping("{id}")
     public ApiResponse deleteUser(@PathVariable("id") Long userId){
         Optional<User> optionalUser = userService.getUserById(userId);

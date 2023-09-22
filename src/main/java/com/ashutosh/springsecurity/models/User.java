@@ -2,10 +2,12 @@ package com.ashutosh.springsecurity.models;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Data
 @Entity
+@NoArgsConstructor
 @Table(name="users", uniqueConstraints = {
         @UniqueConstraint(columnNames = "email")
 })
