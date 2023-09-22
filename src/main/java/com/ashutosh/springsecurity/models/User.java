@@ -27,4 +27,12 @@ public class User {
 
     @Column(name="roles")
     private String roles;
+
+    public User(long id, String name, String password, String email, String roles){
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.roles = roles;
+        this.password = password;
+    }
 }
